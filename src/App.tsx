@@ -25,7 +25,9 @@ import { ApprenticeProfileModal } from './components/ApprenticeProfileModal';
 import { GoogleDriveSyncModal } from './components/GoogleDriveSyncModal';
 import { InstructorDashboard } from './components/InstructorDashboard';
 import { RoleSelectionLanding } from './components/RoleSelectionLanding';
+import { LanguageWritingTool } from './components/LanguageWritingTool';
 import { useAutoDriveSync } from './hooks/useAutoDriveSync';
+import { AppLanguage, TRANSLATIONS } from './i18n/translations';
 import { Lock, KeyRound, Eye, EyeOff, ShieldCheck, AlertCircle, X } from 'lucide-react';
 
 const INITIAL_PROGRESS: UserProgress = {
@@ -152,6 +154,28 @@ export default function App() {
       return false;
     }
   });
+
+  // Language state with persistence (Spanish default, switchable to English)
+  const [language, setLanguage] = useState<AppLanguage>(() => {
+    try {
+      const saved = localStorage.getItem('sena_language');
+      return saved === 'en' ? 'en' : 'es';
+    } catch {
+      return 'es';
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('sena_language', language);
+    } catch {
+      // ignore
+    }
+  }, [language]);
+
+  const handleToggleLanguage = () => {
+    setLanguage((prev) => (prev === 'es' ? 'en' : 'es'));
+  };
 
   // Screen blur transition state
   const [isScreenBlurring, setIsScreenBlurring] = useState<boolean>(false);
@@ -437,6 +461,8 @@ export default function App() {
           isDarkMode={isDarkMode}
           onToggleDarkMode={handleToggleDarkMode}
           initialRolePreference={urlRoleParam}
+          language={language}
+          onToggleLanguage={handleToggleLanguage}
         />
       </div>
     );
@@ -486,6 +512,8 @@ export default function App() {
         currentRole={userRole}
         onToggleRole={handleToggleRole}
         onExitToLanding={handleExitToLanding}
+        language={language}
+        onToggleLanguage={handleToggleLanguage}
       />
 
       {/* Main Content Area */}
@@ -528,6 +556,7 @@ export default function App() {
             sheetLink={sheetLink}
             syncStatus={syncStatus}
             currentRole={userRole}
+            language={language}
           />
         )}
 
@@ -599,6 +628,14 @@ export default function App() {
         {/* Tab 5: Glosario y Consultorio */}
         {activeTab === 'glosario' && (
           <RegulationSearch glossary={GLOSSARY} />
+        )}
+
+        {/* Tab 6: Herramienta de Escritura y Traductor (Inglés a Español) */}
+        {activeTab === 'traductor' && (
+          <LanguageWritingTool
+            currentLanguage={language}
+            onToggleLanguage={handleToggleLanguage}
+          />
         )}
       </main>
 
@@ -730,24 +767,28 @@ export default function App() {
                 S
               </div>
               <span>
-                Servicio Nacional de Aprendizaje — SENA · Inducción Virtual al Reglamento del Aprendiz
+                {language === 'es'
+                  ? 'Servicio Nacional de Aprendizaje — SENA · Inducción Virtual al Reglamento del Aprendiz'
+                  : 'National Training Service — SENA · Virtual Induction to Apprentice Regulations'}
               </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-3 text-[11px]">
               <span className="px-2 py-0.5 rounded font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                {userRole === 'instructor' ? 'Perfil Activo: Instructor SENA (Privilegiado)' : 'Perfil Activo: Aprendiz (Inducción)'}
+                {userRole === 'instructor'
+                  ? (language === 'es' ? 'Perfil Activo: Instructor SENA (Privilegiado)' : 'Active Profile: SENA Instructor (Privileged)')
+                  : (language === 'es' ? 'Perfil Activo: Aprendiz (Inducción)' : 'Active Profile: Apprentice (Induction)')}
               </span>
               <button
                 onClick={handleExitToLanding}
                 className="text-[#39A900] dark:text-[#4ade80] hover:underline cursor-pointer font-semibold"
               >
-                Cambiar de Rol / Salir al Portal
+                {language === 'es' ? 'Cambiar de Rol / Salir al Portal' : 'Change Role / Exit to Portal'}
               </button>
               <span aria-hidden="true">·</span>
-              <span>Acuerdo 009 de 2024</span>
+              <span>{language === 'es' ? 'Acuerdo 009 de 2024' : 'Agreement 009 of 2024'}</span>
               <span aria-hidden="true">·</span>
-              <span>Línea Gratuita Nacional 01 8000 910270</span>
+              <span>{language === 'es' ? 'Línea Gratuita Nacional 01 8000 910270' : 'National Toll-Free Line 01 8000 910270'}</span>
             </div>
           </div>
         </div>

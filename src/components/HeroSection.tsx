@@ -1,6 +1,7 @@
 import React from 'react';
 import { ApprenticeProfile, UserRole } from '../types/induction';
 import { ArrowRight, BookOpen, ShieldCheck, Award, Sparkles, CheckCircle2, FileSpreadsheet } from 'lucide-react';
+import { AppLanguage, TRANSLATIONS } from '../i18n/translations';
 
 interface HeroSectionProps {
   profile: ApprenticeProfile;
@@ -15,6 +16,7 @@ interface HeroSectionProps {
   sheetLink?: string | null;
   syncStatus?: string;
   currentRole?: UserRole;
+  language?: AppLanguage;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
@@ -29,8 +31,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onOpenDriveSync,
   sheetLink,
   syncStatus,
-  currentRole = 'aprendiz'
+  currentRole = 'aprendiz',
+  language = 'es'
 }) => {
+  const t = TRANSLATIONS[language].hero;
   return (
     <div className="bg-white dark:bg-slate-900/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
@@ -40,28 +44,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <div className="lg:col-span-7 space-y-5">
             {/* Unboxed natural kicker */}
             <div className="flex items-center gap-2 text-xs font-semibold text-[#00732F] dark:text-[#4ade80] tracking-wide uppercase">
-              <span>SENA Colombia</span>
+              <span>{t.kickerSena}</span>
               <span aria-hidden="true">·</span>
-              <span>Acuerdo 009 de 2024</span>
+              <span>{t.kickerAcuerdo}</span>
               <span aria-hidden="true">·</span>
-              <span>Formación Profesional Integral</span>
+              <span>{t.kickerFpi}</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight text-balance">
-              Inducción al Reglamento del Aprendiz SENA
+              {t.title}
             </h1>
 
             <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
-              Bienvenido, <strong className="text-slate-900 dark:text-white">{profile.fullName}</strong>. Domina tus derechos fundamentales, compromisos formativos, medidas preventivas y el debido proceso institucional a través de retos prácticos interactivos y obtén tu certificación oficial.
+              {t.welcomePrefix} <strong className="text-slate-900 dark:text-white">{profile.fullName}</strong>. {t.welcomeBody}
             </p>
 
             {/* Quick action buttons */}
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
                 onClick={onStartLearning}
-                className="px-5 py-2.5 text-sm font-semibold text-white bg-[#39A900] hover:bg-[#2e8500] rounded-lg shadow-sm transition-all flex items-center gap-2 whitespace-nowrap"
+                className="px-5 py-2.5 text-sm font-semibold text-white bg-[#39A900] hover:bg-[#2e8500] rounded-lg shadow-sm transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer"
               >
-                <span>Explorar Módulos de Aprendizaje</span>
+                <span>{t.btnModules}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -70,7 +74,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 className="px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-transparent dark:border-slate-700 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-                <span>Simulador de Casos Reales</span>
+                <span>{t.btnSimulator}</span>
               </button>
 
               {/* Only visible for instructors */}
